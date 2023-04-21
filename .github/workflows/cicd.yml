@@ -1,7 +1,30 @@
 name: For every push
 on: push
 jobs:
-  say-hello:
+  CI:
     runs-on: ubuntu-latest
     steps:
-    - run: echo "Success!"
+    - uses: actions/checkout@v2
+    - name: PHPUnit Tests
+      uses: php-actions/phpunit@v1
+      env:
+          TEST_NAME: dniTest
+      with:
+          configuration: test/phpunit.xml
+          args: --coverage-text
+  CD:
+    runs-on: ubuntu-latest
+    needs: CI
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Docker Login
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build
+        run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/dni:${{ github.sha }} .
+          docker build -t ${{ secrets.DOCKER_USER }}/dni:latest .
+      - name: Push
+        run: |
+          docker push ${{ secrets.DOCKER_USER }}/dni:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USER }}/dni:latest 
