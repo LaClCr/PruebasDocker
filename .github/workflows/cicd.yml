@@ -1,0 +1,7 @@
+name: For every push
+on: push
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "Success!"
