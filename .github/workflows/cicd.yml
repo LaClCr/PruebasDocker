@@ -10,7 +10,7 @@ jobs:
       env:
           TEST_NAME: dniTest
       with:
-          configuration: test/phpunit.xml
+          configuration: TEST/phpunit.xml
           args: --coverage-text
   CD:
     runs-on: ubuntu-latest
